@@ -1,0 +1,31 @@
+name: Checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install and verify the native speech engine
+        run: |
+          python -m pip install -r requirements.txt
+          python -c "import av, ctranslate2, faster_whisper, numpy; print(ctranslate2.get_supported_compute_types('cpu'))"
+      - name: Check launcher scripts
+        run: |
+          for script in run.sh setup.sh 'Voice Pad.command'; do sh -n "$script"; done
+          python -m py_compile server.py launch.py download-model.py install-desktop.py
+          node --check static/app.mjs
+      - name: Test HTTP server and platform launchers
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Test audio processing
+        run: node --test tests/audio.test.mjs

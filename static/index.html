@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f0">
+  <title>واژه — گفتار به نوشتار</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="brand" href="/" aria-label="واژه، صفحهٔ اصلی"><img src="/icon.svg" alt="" width="42" height="42"><span>واژه<small>گفتار به نوشتار</small></span></a>
+      <span class="offline"><i></i> روی همین دستگاه</span>
+    </header>
+    <main>
+      <div class="eyebrow">از صدای تو، به کلمه‌های تو</div>
+      <h1>حرف بزن،<br><span>متنش اینجاست.</span></h1>
+      <p class="intro">فکرت را بگو. واژه می‌نویسد، تو کپی کن.</p>
+
+      <section class="recorder" aria-label="ضبط صدا">
+        <div class="controls">
+          <div class="select-wrap"><label for="language">زبان گفتار</label><select id="language"><option value="fa">فارسی</option><option value="en">English</option><option value="auto">تشخیص خودکار</option></select></div>
+          <div class="select-wrap mic-select"><label for="microphone">میکروفون</label><select id="microphone"><option value="">پیش‌فرض سیستم</option></select></div>
+        </div>
+        <div class="recording-area">
+          <button id="record" class="record-button" type="button" disabled aria-label="شروع ضبط" aria-pressed="false"><svg id="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="2" width="8" height="13" rx="4"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg><span class="stop-icon" hidden></span></button>
+          <strong id="record-label">در حال آماده‌شدن…</strong>
+          <span id="timer" class="timer" dir="ltr">00:00</span>
+          <canvas id="wave" height="46" aria-label="شدت صدای میکروفون"></canvas>
+          <span id="status" class="status" role="status" aria-live="polite">مدل Whisper در حال بارگذاری است.</span>
+        </div>
+        <div class="recorder-footer"><span><span class="status-dot"></span> پردازش کاملاً آفلاین</span><span class="shortcut"><kbd id="shortcut-modifier">Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd></span></div>
+      </section>
+
+      <section class="transcript" aria-label="متن تبدیل‌شده">
+        <div class="text-toolbar"><div><h2>متن تو</h2><span id="word-count">۰ کلمه</span></div><button id="clear" class="text-button" type="button" disabled>پاک‌کردن</button></div>
+        <textarea id="text" dir="auto" aria-label="متن قابل ویرایش" placeholder="کلمه‌هایت اینجا می‌نشینند…" spellcheck="false"></textarea>
+        <div id="draft" class="draft" dir="auto" aria-live="polite" hidden></div>
+        <div id="error" class="error" role="alert" hidden></div>
+        <div id="retry-row" class="retry-row" hidden><button id="retry" type="button" class="text-button">تلاش دوباره برای بخش‌های باقی‌مانده</button></div>
+        <div class="text-footer"><span id="text-hint">پس از تبدیل می‌توانی متن را ویرایش کنی.</span><button id="copy" class="copy-button" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span>کپی متن</span></button></div>
+      </section>
+      <p class="privacy">صدایت ذخیره یا به اینترنت ارسال نمی‌شود. متن روی همین مرورگر می‌ماند.</p>
+    </main>
+    <footer><span>واژه <span class="footer-dot">·</span> جایی برای صدای تو</span><span id="model-label" dir="ltr">Powered by local Whisper</span></footer>
+  </div>
+</body>
+</html>
