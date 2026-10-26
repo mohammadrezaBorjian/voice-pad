@@ -13,6 +13,7 @@ import urllib.error
 import urllib.request
 
 ROOT = Path(__file__).resolve().parent
+LOCAL_HTTP = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 
 def find_python():
@@ -64,7 +65,7 @@ def open_window(url):
 
 def status(url):
     try:
-        with urllib.request.urlopen(url + "/api/status", timeout=1) as response:
+        with LOCAL_HTTP.open(url + "/api/status", timeout=1) as response:
             return json.load(response)
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
         return None

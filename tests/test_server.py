@@ -30,6 +30,7 @@ class ServerTests(unittest.TestCase):
         cls.server = app.Server(("127.0.0.1", 0), app.Handler)
         cls.server.engine = FakeEngine()
         cls.url = "http://127.0.0.1:" + str(cls.server.server_port)
+        cls.http = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()
 
@@ -42,7 +43,7 @@ class ServerTests(unittest.TestCase):
     def request(self, path, data=None, headers=None):
         request = urllib.request.Request(self.url + path, data=data, headers=headers or {})
         try:
-            response = urllib.request.urlopen(request, timeout=3)
+            response = self.http.open(request, timeout=3)
         except urllib.error.HTTPError as response_error:
             response = response_error
         with response:
@@ -83,7 +84,10 @@ class ServerTests(unittest.TestCase):
     def test_audio_size_and_backpressure(self):
         self.assertEqual(self.post(body=b"\0" * 100)[0], 400)
         self.assertEqual(self.post(body=b"\0" * 8001)[0], 400)
-        self.assertEqual(self.post(body=b"\0" * (16000 * 17 * 2))[0], 400)
+        # Rejection happens from the declared size, before an oversized upload.
+        # Sending the entire body can race the early close and cause a TCP reset
+        # on macOS before urllib gets a chance to read the rejection response.
+        self.assertEqual(self.post(body=b"", **{"Content-Length": str(16000 * 17 * 2)})[0], 400)
         self.server.engine.lock.acquire()
         try:
             self.assertEqual(self.post()[0], 429)
